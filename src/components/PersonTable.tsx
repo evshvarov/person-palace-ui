@@ -43,7 +43,7 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
             </tr>
           )}
           {!loading && data.map((person) => (
-            <tr key={person.id || person.Name} className="border-t hover:bg-accent transition group">
+            <tr key={person.PersonId} className="border-t hover:bg-accent transition group">
               <td className="p-3">{person.Name}</td>
               <td className="p-3">{person.Company || ''}</td>
               <td className="p-3">{person.Title || ''}</td>

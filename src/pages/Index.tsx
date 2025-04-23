@@ -26,9 +26,9 @@ const Index = () => {
   const { mutate: savePerson, isPending: isSaving } = useMutation({
     mutationFn: async (values: PersonSubmitValues) => {
       if (editingPerson) {
-        const { id } = editingPerson;
-        console.log("Updating person with ID:", id);
-        return updatePerson(id, values as PersonUpdate);
+        const personId = editingPerson.PersonId;
+        console.log("Updating person with ID:", personId);
+        return updatePerson(personId, values as PersonUpdate);
       } else {
         return createPerson(values as PersonCreate);
       }
@@ -113,10 +113,10 @@ const Index = () => {
   };
 
   const handleDeleteConfirm = () => {
-    if (deletingPerson && deletingPerson.id) {
-      removePerson(deletingPerson.id);
+    if (deletingPerson && deletingPerson.PersonId) {
+      removePerson(deletingPerson.PersonId);
     } else {
-      console.error("Cannot delete: no valid ID for the deleting person", deletingPerson);
+      console.error("Cannot delete: no valid PersonId for the deleting person", deletingPerson);
       toast({
         title: "Error",
         description: "Cannot delete: person ID is missing.",
