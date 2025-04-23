@@ -1,7 +1,8 @@
 
 import { Person, PersonCreate, PersonUpdate } from "./types";
 
-const API_ROOT = "/crud2";
+// Change API_ROOT to use the full server URL
+const API_ROOT = "http://localhost:52773/crud2";
 
 export async function getPersons(): Promise<Person[]> {
   const res = await fetch(`${API_ROOT}/persons`);
