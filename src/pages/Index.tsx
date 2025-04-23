@@ -88,6 +88,17 @@ const Index = () => {
     if (!isDeleteOpen) setDeletingPerson(null);
   }, [isFormOpen, isDeleteOpen]);
 
+  // Convert Person to PersonFormValues for editing
+  const getFormDefaultValues = (): Partial<PersonFormValues> | undefined => {
+    if (!editingPerson) return undefined;
+    
+    return {
+      ...editingPerson,
+      // Convert string date to Date object when editing
+      DOB: editingPerson.DOB ? new Date(editingPerson.DOB) : null
+    };
+  };
+
   return (
     <div className="min-h-screen px-2 py-8 md:p-12 bg-gray-50">
       <div className="max-w-4xl mx-auto flex flex-col gap-8">
@@ -112,7 +123,7 @@ const Index = () => {
         open={isFormOpen}
         onClose={() => setFormOpen(false)}
         onSubmit={handleFormSubmit}
-        defaultValues={editingPerson}
+        defaultValues={getFormDefaultValues()}
         isLoading={isSaving}
       />
 
