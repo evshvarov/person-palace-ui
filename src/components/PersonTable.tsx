@@ -1,8 +1,9 @@
 
 import React from "react";
 import { Person } from "@/api/types";
-import { Pencil, Trash } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   data: Person[];
@@ -22,7 +23,7 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
             <th className="p-3 text-left font-semibold">Title</th>
             <th className="p-3 text-left font-semibold">Phone</th>
             <th className="p-3 text-left font-semibold">DOB</th>
-            <th className="p-3 text-center font-semibold w-20">Actions</th>
+            <th className="p-3 text-center font-semibold w-24">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -54,28 +55,26 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
                   : ""}
               </td>
               <td className="p-3 text-center">
-                <button
-                  onClick={() => onEdit(person)}
-                  className={cn(
-                    "inline-flex items-center bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2 hover:bg-primary/90 transition group-hover:scale-110",
-                    loading && "opacity-40 pointer-events-none"
-                  )}
-                  aria-label="Edit"
-                  disabled={loading}
-                >
-                  <Pencil size={16} />
-                </button>
-                <button
-                  onClick={() => onDelete(person)}
-                  className={cn(
-                    "inline-flex items-center bg-destructive text-destructive-foreground rounded-md px-2 py-1 hover:bg-destructive/90 transition group-hover:scale-110",
-                    loading && "opacity-40 pointer-events-none"
-                  )}
-                  aria-label="Delete"
-                  disabled={loading}
-                >
-                  <Trash size={16} />
-                </button>
+                <div className="flex justify-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="icon" 
+                    onClick={() => onEdit(person)}
+                    disabled={loading}
+                    className={cn(loading && "opacity-40 pointer-events-none")}
+                  >
+                    <Pencil size={16} />
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    size="icon" 
+                    onClick={() => onDelete(person)}
+                    disabled={loading}
+                    className={cn(loading && "opacity-40 pointer-events-none")}
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}
@@ -84,3 +83,4 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
     </div>
   );
 }
+
