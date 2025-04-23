@@ -1,14 +1,128 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPersons, createPerson, updatePerson, deletePerson } from "@/api/person";
+import { Person, PersonCreate, PersonUpdate } from "@/api/types";
+import PersonTable from "@/components/PersonTable";
+import PersonForm, { PersonFormValues } from "@/components/PersonForm";
+import DeleteConfirm from "@/components/DeleteConfirm";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const queryClient = useQueryClient();
+  const [isFormOpen, setFormOpen] = React.useState(false);
+  const [isDeleteOpen, setDeleteOpen] = React.useState(false);
+  const [editingPerson, setEditingPerson] = React.useState<Person | null>(null);
+  const [deletingPerson, setDeletingPerson] = React.useState<Person | null>(null);
+
+  // Fetch persons
+  const { data: persons = [], isLoading } = useQuery({
+    queryKey: ["persons"],
+    queryFn: getPersons,
+  });
+
+  // Create or update person
+  const { mutateAsync: savePerson, isLoading: isSaving } = useMutation({
+    mutationFn: async (values: PersonFormValues) => {
+      if (editingPerson) {
+        const { id } = editingPerson;
+        return updatePerson(id, values as PersonUpdate);
+      } else {
+        return createPerson(values as PersonCreate);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["persons"] });
+      setFormOpen(false);
+      setEditingPerson(null);
+      toast({
+        title: "Saved!",
+        description: "Person was successfully saved.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Error", description: err.message || "Failed to save person.", variant: "destructive" });
+    },
+  });
+
+  // Delete person
+  const { mutateAsync: removePerson, isLoading: isDeleting } = useMutation({
+    mutationFn: async (id: string) => deletePerson(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["persons"] });
+      setDeleteOpen(false);
+      setDeletingPerson(null);
+      toast({
+        title: "Deleted!",
+        description: "Person was removed.",
+      });
+    },
+    onError: (err: any) => {
+      toast({ title: "Error", description: err.message || "Failed to delete person.", variant: "destructive" });
+    },
+  });
+
+  const handleEdit = (person: Person) => {
+    setEditingPerson(person);
+    setFormOpen(true);
+  };
+
+  const handleDelete = (person: Person) => {
+    setDeletingPerson(person);
+    setDeleteOpen(true);
+  };
+
+  const handleFormSubmit = async (values: PersonFormValues) => {
+    await savePerson(values);
+  };
+
+  const handleCreateNew = () => {
+    setEditingPerson(null);
+    setFormOpen(true);
+  };
+
+  React.useEffect(() => {
+    if (!isFormOpen) setEditingPerson(null);
+    if (!isDeleteOpen) setDeletingPerson(null);
+  }, [isFormOpen, isDeleteOpen]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen px-2 py-8 md:p-12 bg-gray-50">
+      <div className="max-w-4xl mx-auto flex flex-col gap-8">
+        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <h1 className="text-3xl font-bold text-primary tracking-tight mb-2">
+            Person Palace
+          </h1>
+          <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover-scale">
+            <Plus size={18} />
+            Add Person
+          </Button>
+        </div>
+        <PersonTable
+          data={persons}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          loading={isLoading}
+        />
       </div>
+
+      <PersonForm
+        open={isFormOpen}
+        onClose={() => setFormOpen(false)}
+        onSubmit={handleFormSubmit}
+        defaultValues={editingPerson || undefined}
+        isLoading={isSaving}
+      />
+
+      <DeleteConfirm
+        open={isDeleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={() => deletingPerson && removePerson(deletingPerson.id)}
+        loading={isDeleting}
+      />
     </div>
   );
 };
-
 export default Index;
