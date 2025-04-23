@@ -27,13 +27,22 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
         </thead>
         <tbody>
           {data.length === 0 && !loading && (
-            <tr>
+            <tr key="no-data">
               <td colSpan={6} className="p-6 text-center text-gray-500">
                 No persons found.
               </td>
             </tr>
           )}
-          {data.map((person) => (
+          {loading && (
+            <tr key="loading">
+              <td colSpan={6} className="p-6 text-center">
+                <div className="w-full flex py-10 items-center justify-center text-gray-500 animate-pulse">
+                  Loading...
+                </div>
+              </td>
+            </tr>
+          )}
+          {!loading && data.map((person) => (
             <tr key={person.id} className="border-t hover:bg-accent transition group">
               <td className="p-3">{person.Name}</td>
               <td className="p-3">{person.Company}</td>
@@ -70,11 +79,6 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
           ))}
         </tbody>
       </table>
-      {loading && (
-        <div className="w-full flex py-10 items-center justify-center text-gray-500 animate-pulse">
-          Loading...
-        </div>
-      )}
     </div>
   );
 }

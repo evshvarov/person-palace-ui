@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPersons, createPerson, updatePerson, deletePerson } from "@/api/person";
 import { Person, PersonCreate, PersonUpdate } from "@/api/types";
 import PersonTable from "@/components/PersonTable";
-import PersonForm, { PersonFormValues } from "@/components/PersonForm";
+import PersonForm, { PersonFormValues, PersonSubmitValues } from "@/components/PersonForm";
 import DeleteConfirm from "@/components/DeleteConfirm";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -25,12 +25,12 @@ const Index = () => {
 
   // Create or update person
   const { mutate: savePerson, isPending: isSaving } = useMutation({
-    mutationFn: async (values: PersonFormValues) => {
+    mutationFn: async (values: PersonSubmitValues) => {
       if (editingPerson) {
         const { id } = editingPerson;
-        return updatePerson(id, values as unknown as PersonUpdate);
+        return updatePerson(id, values as PersonUpdate);
       } else {
-        return createPerson(values as unknown as PersonCreate);
+        return createPerson(values as PersonCreate);
       }
     },
     onSuccess: () => {
@@ -74,7 +74,7 @@ const Index = () => {
     setDeleteOpen(true);
   };
 
-  const handleFormSubmit = async (values: PersonFormValues) => {
+  const handleFormSubmit = async (values: PersonSubmitValues) => {
     savePerson(values);
   };
 
@@ -108,24 +108,13 @@ const Index = () => {
         />
       </div>
 
-      {editingPerson && (
-        <PersonForm
-          open={isFormOpen}
-          onClose={() => setFormOpen(false)}
-          onSubmit={handleFormSubmit}
-          defaultValues={editingPerson}
-          isLoading={isSaving}
-        />
-      )}
-
-      {!editingPerson && (
-        <PersonForm
-          open={isFormOpen}
-          onClose={() => setFormOpen(false)}
-          onSubmit={handleFormSubmit}
-          isLoading={isSaving}
-        />
-      )}
+      <PersonForm
+        open={isFormOpen}
+        onClose={() => setFormOpen(false)}
+        onSubmit={handleFormSubmit}
+        defaultValues={editingPerson}
+        isLoading={isSaving}
+      />
 
       <DeleteConfirm
         open={isDeleteOpen}

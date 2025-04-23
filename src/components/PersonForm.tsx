@@ -18,12 +18,19 @@ const FormSchema = z.object({
   Title: z.string().max(50, "Max 50 chars").optional().or(z.literal("")),
   DOB: z.date().optional().nullable(),
 });
+
+// Export type with DOB as Date for form handling
 export type PersonFormValues = z.infer<typeof FormSchema>;
+
+// Define a separate type for API submission with string DOB
+export type PersonSubmitValues = Omit<PersonFormValues, "DOB"> & {
+  DOB?: string;
+};
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: PersonFormValues) => void;
+  onSubmit: (data: PersonSubmitValues) => void;
   defaultValues?: Partial<PersonFormValues>;
   isLoading?: boolean;
 };
