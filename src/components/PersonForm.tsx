@@ -50,12 +50,13 @@ export default function PersonForm({ open, onClose, onSubmit, defaultValues, isL
 
   React.useEffect(() => {
     if (open) {
-      // Convert string DOB to Date if present
-      const processedValues = { ...defaultValues };
-      if (defaultValues?.DOB && typeof defaultValues.DOB === 'string') {
-        processedValues.DOB = new Date(defaultValues.DOB);
-      }
-      form.reset(processedValues);
+      form.reset({
+        Name: defaultValues?.Name || "",
+        Company: defaultValues?.Company || "",
+        Phone: defaultValues?.Phone || "",
+        Title: defaultValues?.Title || "",
+        DOB: defaultValues?.DOB || null,
+      });
     }
   }, [open, defaultValues, form]);
 
@@ -72,7 +73,10 @@ export default function PersonForm({ open, onClose, onSubmit, defaultValues, isL
       <PopoverContent
         className="w-[360px] p-6 flex flex-col gap-4"
         align="center"
-        onInteractOutside={onClose}
+        onInteractOutside={(e) => {
+          e.preventDefault();
+          onClose();
+        }}
       >
         <form
           onSubmit={form.handleSubmit(handleFormSubmit)}

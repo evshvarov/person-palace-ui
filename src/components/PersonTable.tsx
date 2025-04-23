@@ -57,20 +57,22 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
                 <button
                   onClick={() => onEdit(person)}
                   className={cn(
-                    "inline-flex items-center border rounded-md px-2 py-1 mr-2 hover:bg-primary/90 text-primary-foreground transition group-hover:scale-110",
+                    "inline-flex items-center bg-primary text-primary-foreground rounded-md px-2 py-1 mr-2 hover:bg-primary/90 transition group-hover:scale-110",
                     loading && "opacity-40 pointer-events-none"
                   )}
                   aria-label="Edit"
+                  disabled={loading}
                 >
                   <Pencil size={16} />
                 </button>
                 <button
                   onClick={() => onDelete(person)}
                   className={cn(
-                    "inline-flex items-center border rounded-md px-2 py-1 hover:bg-destructive text-destructive-foreground transition group-hover:scale-110",
+                    "inline-flex items-center bg-destructive text-destructive-foreground rounded-md px-2 py-1 hover:bg-destructive/90 transition group-hover:scale-110",
                     loading && "opacity-40 pointer-events-none"
                   )}
                   aria-label="Delete"
+                  disabled={loading}
                 >
                   <Trash size={16} />
                 </button>

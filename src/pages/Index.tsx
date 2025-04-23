@@ -43,7 +43,11 @@ const Index = () => {
       });
     },
     onError: (err: any) => {
-      toast({ title: "Error", description: err.message || "Failed to save person.", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: err.message || "Failed to save person.", 
+        variant: "destructive" 
+      });
     },
   });
 
@@ -60,7 +64,11 @@ const Index = () => {
       });
     },
     onError: (err: any) => {
-      toast({ title: "Error", description: err.message || "Failed to delete person.", variant: "destructive" });
+      toast({ 
+        title: "Error", 
+        description: err.message || "Failed to delete person.", 
+        variant: "destructive" 
+      });
     },
   });
 
@@ -106,7 +114,7 @@ const Index = () => {
           <h1 className="text-3xl font-bold text-primary tracking-tight mb-2">
             Person Palace
           </h1>
-          <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover-scale">
+          <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover:shadow-md">
             <Plus size={18} />
             Add Person
           </Button>
