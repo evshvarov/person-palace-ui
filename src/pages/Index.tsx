@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPersons, createPerson, updatePerson, deletePerson } from "@/api/person";
@@ -28,6 +27,7 @@ const Index = () => {
     mutationFn: async (values: PersonSubmitValues) => {
       if (editingPerson) {
         const { id } = editingPerson;
+        console.log("Updating person with ID:", id);
         return updatePerson(id, values as PersonUpdate);
       } else {
         return createPerson(values as PersonCreate);
@@ -43,6 +43,7 @@ const Index = () => {
       });
     },
     onError: (err: any) => {
+      console.error("Save error:", err);
       toast({ 
         title: "Error", 
         description: err.message || "Failed to save person.", 
@@ -53,7 +54,10 @@ const Index = () => {
 
   // Delete person
   const { mutate: removePerson, isPending: isDeleting } = useMutation({
-    mutationFn: async (id: string) => deletePerson(id),
+    mutationFn: async (id: string) => {
+      console.log("Deleting person with ID:", id);
+      return deletePerson(id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["persons"] });
       setDeleteOpen(false);
@@ -64,6 +68,7 @@ const Index = () => {
       });
     },
     onError: (err: any) => {
+      console.error("Delete error:", err);
       toast({ 
         title: "Error", 
         description: err.message || "Failed to delete person.", 
@@ -107,6 +112,19 @@ const Index = () => {
     };
   };
 
+  const handleDeleteConfirm = () => {
+    if (deletingPerson && deletingPerson.id) {
+      removePerson(deletingPerson.id);
+    } else {
+      console.error("Cannot delete: no valid ID for the deleting person", deletingPerson);
+      toast({
+        title: "Error",
+        description: "Cannot delete: person ID is missing.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen px-2 py-8 md:p-12 bg-gray-50">
       <div className="max-w-4xl mx-auto flex flex-col gap-8">
@@ -138,7 +156,7 @@ const Index = () => {
       <DeleteConfirm
         open={isDeleteOpen}
         onClose={() => setDeleteOpen(false)}
-        onConfirm={() => deletingPerson && removePerson(deletingPerson.id)}
+        onConfirm={handleDeleteConfirm}
         loading={isDeleting}
       />
     </div>

@@ -27,14 +27,14 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
         </thead>
         <tbody>
           {data.length === 0 && !loading && (
-            <tr key="no-data">
+            <tr>
               <td colSpan={6} className="p-6 text-center text-gray-500">
                 No persons found.
               </td>
             </tr>
           )}
           {loading && (
-            <tr key="loading">
+            <tr>
               <td colSpan={6} className="p-6 text-center">
                 <div className="w-full flex py-10 items-center justify-center text-gray-500 animate-pulse">
                   Loading...
@@ -43,11 +43,11 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
             </tr>
           )}
           {!loading && data.map((person) => (
-            <tr key={person.id} className="border-t hover:bg-accent transition group">
+            <tr key={person.id || person.Name} className="border-t hover:bg-accent transition group">
               <td className="p-3">{person.Name}</td>
-              <td className="p-3">{person.Company}</td>
-              <td className="p-3">{person.Title}</td>
-              <td className="p-3">{person.Phone}</td>
+              <td className="p-3">{person.Company || ''}</td>
+              <td className="p-3">{person.Title || ''}</td>
+              <td className="p-3">{person.Phone || ''}</td>
               <td className="p-3">
                 {person.DOB
                   ? new Date(person.DOB).toLocaleDateString()
