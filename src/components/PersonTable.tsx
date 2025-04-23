@@ -1,7 +1,6 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Person } from "@/api/types";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -12,22 +11,69 @@ type Props = {
   loading?: boolean;
 };
 
+type SortConfig = {
+  key: keyof Person | null;
+  direction: 'asc' | 'desc';
+};
+
 export default function PersonTable({ data, onEdit, onDelete, loading }: Props) {
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: null, direction: 'asc' });
+
+  const handleSort = (key: keyof Person) => {
+    setSortConfig(currentSort => ({
+      key,
+      direction: currentSort.key === key && currentSort.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const sortedData = React.useMemo(() => {
+    if (!sortConfig.key) return data;
+
+    return [...data].sort((a, b) => {
+      const aValue = a[sortConfig.key as keyof Person];
+      const bValue = b[sortConfig.key as keyof Person];
+
+      if (!aValue && !bValue) return 0;
+      if (!aValue) return 1;
+      if (!bValue) return -1;
+
+      const comparison = String(aValue).localeCompare(String(bValue));
+      return sortConfig.direction === 'asc' ? comparison : -comparison;
+    });
+  }, [data, sortConfig]);
+
+  const SortIcon = ({ columnKey }: { columnKey: keyof Person }) => {
+    if (sortConfig.key !== columnKey) return null;
+    return sortConfig.direction === 'asc' ? <ArrowUp size={16} /> : <ArrowDown size={16} />;
+  };
+
+  const renderSortableHeader = (label: string, key: keyof Person) => (
+    <th 
+      className="p-3 text-left font-semibold cursor-pointer hover:bg-accent/50 transition-colors"
+      onClick={() => handleSort(key)}
+    >
+      <div className="flex items-center gap-1">
+        {label}
+        <SortIcon columnKey={key} />
+      </div>
+    </th>
+  );
+
   return (
     <div className="overflow-x-auto shadow-sm rounded-lg">
       <table className="min-w-full text-sm border-collapse bg-white">
         <thead className="bg-primary text-primary-foreground">
           <tr>
-            <th className="p-3 text-left font-semibold">Name</th>
-            <th className="p-3 text-left font-semibold">Company</th>
-            <th className="p-3 text-left font-semibold">Title</th>
-            <th className="p-3 text-left font-semibold">Phone</th>
-            <th className="p-3 text-left font-semibold">DOB</th>
+            {renderSortableHeader('Name', 'Name')}
+            {renderSortableHeader('Company', 'Company')}
+            {renderSortableHeader('Title', 'Title')}
+            {renderSortableHeader('Phone', 'Phone')}
+            {renderSortableHeader('DOB', 'DOB')}
             <th className="p-3 text-center font-semibold w-24">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {data.length === 0 && !loading && (
+          {sortedData.length === 0 && !loading && (
             <tr>
               <td colSpan={6} className="p-6 text-center text-gray-500">
                 No persons found.
@@ -43,7 +89,7 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
               </td>
             </tr>
           )}
-          {!loading && data.map((person) => (
+          {!loading && sortedData.map((person) => (
             <tr key={person.PersonId} className="border-t hover:bg-accent transition group">
               <td className="p-3">{person.Name}</td>
               <td className="p-3">{person.Company || ''}</td>
@@ -83,4 +129,3 @@ export default function PersonTable({ data, onEdit, onDelete, loading }: Props) 
     </div>
   );
 }
-
