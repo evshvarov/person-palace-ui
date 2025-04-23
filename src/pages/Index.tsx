@@ -24,13 +24,13 @@ const Index = () => {
   });
 
   // Create or update person
-  const { mutateAsync: savePerson, isLoading: isSaving } = useMutation({
+  const { mutate: savePerson, isPending: isSaving } = useMutation({
     mutationFn: async (values: PersonFormValues) => {
       if (editingPerson) {
         const { id } = editingPerson;
-        return updatePerson(id, values as PersonUpdate);
+        return updatePerson(id, values as unknown as PersonUpdate);
       } else {
-        return createPerson(values as PersonCreate);
+        return createPerson(values as unknown as PersonCreate);
       }
     },
     onSuccess: () => {
@@ -48,7 +48,7 @@ const Index = () => {
   });
 
   // Delete person
-  const { mutateAsync: removePerson, isLoading: isDeleting } = useMutation({
+  const { mutate: removePerson, isPending: isDeleting } = useMutation({
     mutationFn: async (id: string) => deletePerson(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["persons"] });
@@ -75,7 +75,7 @@ const Index = () => {
   };
 
   const handleFormSubmit = async (values: PersonFormValues) => {
-    await savePerson(values);
+    savePerson(values);
   };
 
   const handleCreateNew = () => {
@@ -108,13 +108,24 @@ const Index = () => {
         />
       </div>
 
-      <PersonForm
-        open={isFormOpen}
-        onClose={() => setFormOpen(false)}
-        onSubmit={handleFormSubmit}
-        defaultValues={editingPerson || undefined}
-        isLoading={isSaving}
-      />
+      {editingPerson && (
+        <PersonForm
+          open={isFormOpen}
+          onClose={() => setFormOpen(false)}
+          onSubmit={handleFormSubmit}
+          defaultValues={editingPerson}
+          isLoading={isSaving}
+        />
+      )}
+
+      {!editingPerson && (
+        <PersonForm
+          open={isFormOpen}
+          onClose={() => setFormOpen(false)}
+          onSubmit={handleFormSubmit}
+          isLoading={isSaving}
+        />
+      )}
 
       <DeleteConfirm
         open={isDeleteOpen}

@@ -16,7 +16,7 @@ const FormSchema = z.object({
   Company: z.string().max(50, "Max 50 chars").optional().or(z.literal("")),
   Phone: z.string().optional().or(z.literal("")),
   Title: z.string().max(50, "Max 50 chars").optional().or(z.literal("")),
-  DOB: z.coerce.date().optional().or(z.literal("")),
+  DOB: z.date().optional().nullable(),
 });
 export type PersonFormValues = z.infer<typeof FormSchema>;
 
@@ -34,7 +34,7 @@ export default function PersonForm({ open, onClose, onSubmit, defaultValues, isL
     defaultValues: {
       Name: "",
       Company: "",
-      DOB: undefined,
+      DOB: null,
       Phone: "",
       Title: "",
       ...(defaultValues || {}),
@@ -42,18 +42,21 @@ export default function PersonForm({ open, onClose, onSubmit, defaultValues, isL
   });
 
   React.useEffect(() => {
-    if (open) form.reset({ ...form.getValues(), ...(defaultValues || {}) });
-    // eslint-disable-next-line
-  }, [open, JSON.stringify(defaultValues)]);
+    if (open) {
+      // Convert string DOB to Date if present
+      const processedValues = { ...defaultValues };
+      if (defaultValues?.DOB && typeof defaultValues.DOB === 'string') {
+        processedValues.DOB = new Date(defaultValues.DOB);
+      }
+      form.reset(processedValues);
+    }
+  }, [open, defaultValues, form]);
 
   function handleFormSubmit(values: PersonFormValues) {
     onSubmit({
       ...values,
-      DOB: values.DOB
-        ? typeof values.DOB === "string"
-          ? values.DOB
-          : format(values.DOB, "yyyy-MM-dd")
-        : "",
+      // Format Date to ISO string if exists
+      DOB: values.DOB ? format(values.DOB, "yyyy-MM-dd") : undefined,
     });
   }
 
@@ -108,22 +111,14 @@ export default function PersonForm({ open, onClose, onSubmit, defaultValues, isL
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {field.value
-                        ? typeof field.value === "string"
-                          ? field.value
-                          : format(field.value, "PPP")
+                        ? format(field.value, "PPP")
                         : "Pick a date"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={
-                        typeof field.value === "string"
-                          ? field.value
-                            ? new Date(field.value)
-                            : undefined
-                          : field.value
-                      }
+                      selected={field.value || undefined}
                       onSelect={field.onChange}
                       initialFocus
                       className={cn("p-3 pointer-events-auto")}
