@@ -70,6 +70,7 @@ export default function PersonForm({ open, onClose, onSubmit, defaultValues, isL
 
   return (
     <Popover open={open} onOpenChange={(open) => !open && onClose()}>
+      <PopoverTrigger className="hidden" />
       <PopoverContent
         className="w-[360px] p-6 flex flex-col gap-4"
         align="center"
