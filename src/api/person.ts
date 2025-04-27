@@ -1,6 +1,6 @@
 import { Person, PersonCreate, PersonUpdate } from "./types";
 
-const API_ROOT = "https://lovable-backend.demo.community.intersystems.com/crud2";
+const API_ROOT = "/crud2";
 
 export async function getPersons(): Promise<Person[]> {
   const res = await fetch(`${API_ROOT}/persons`);
