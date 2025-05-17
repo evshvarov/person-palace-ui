@@ -7,7 +7,7 @@ import PersonTable from "@/components/PersonTable";
 import PersonForm, { PersonFormValues, PersonSubmitValues } from "@/components/PersonForm";
 import DeleteConfirm from "@/components/DeleteConfirm";
 import { Button } from "@/components/ui/button";
-import { Plus, ExternalLink } from "lucide-react";
+import { Plus, ExternalLink, Github } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -148,7 +148,7 @@ const Index = () => {
                 className="gap-2 flex items-center px-5 shadow hover:shadow-md"
                 variant="outline"
               >
-                <ExternalLink size={18} />
+                <Github size={18} />
                 Frontend GitHub
               </Button>
               <Button 
@@ -156,7 +156,7 @@ const Index = () => {
                 className="gap-2 flex items-center px-5 shadow hover:shadow-md"
                 variant="outline"
               >
-                <ExternalLink size={18} />
+                <Github size={18} />
                 Backend GitHub
               </Button>
               <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover:shadow-md">
