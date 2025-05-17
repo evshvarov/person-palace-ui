@@ -143,6 +143,22 @@ const Index = () => {
                 <ExternalLink size={18} />
                 Backend Project Profile
               </Button>
+              <Button 
+                onClick={() => window.open('https://github.com/evshvarov/person-palace-ui/', '_blank')}
+                className="gap-2 flex items-center px-5 shadow hover:shadow-md"
+                variant="outline"
+              >
+                <ExternalLink size={18} />
+                Frontend GitHub
+              </Button>
+              <Button 
+                onClick={() => window.open('https://github.com/evshvarov/lovable-backend', '_blank')}
+                className="gap-2 flex items-center px-5 shadow hover:shadow-md"
+                variant="outline"
+              >
+                <ExternalLink size={18} />
+                Backend GitHub
+              </Button>
               <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover:shadow-md">
                 <Plus size={18} />
                 Add Person
