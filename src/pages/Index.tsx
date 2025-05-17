@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPersons, createPerson, updatePerson, deletePerson } from "@/api/person";
@@ -6,7 +7,7 @@ import PersonTable from "@/components/PersonTable";
 import PersonForm, { PersonFormValues, PersonSubmitValues } from "@/components/PersonForm";
 import DeleteConfirm from "@/components/DeleteConfirm";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ExternalLink } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -128,14 +129,26 @@ const Index = () => {
   return (
     <div className="min-h-screen px-2 py-8 md:p-12 bg-gray-50">
       <div className="max-w-4xl mx-auto flex flex-col gap-8">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <h1 className="text-3xl font-bold text-primary tracking-tight mb-2">
-            Person Palace
-          </h1>
-          <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover:shadow-md">
-            <Plus size={18} />
-            Add Person
-          </Button>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <h1 className="text-3xl font-bold text-primary tracking-tight mb-2">
+              Person Palace
+            </h1>
+            <div className="flex flex-col md:flex-row gap-2">
+              <Button 
+                onClick={() => window.open('https://openexchange.intersystems.com/package/lovable-backend', '_blank')}
+                className="gap-2 flex items-center px-5 shadow hover:shadow-md"
+                variant="secondary"
+              >
+                <ExternalLink size={18} />
+                Backend Project Profile
+              </Button>
+              <Button onClick={handleCreateNew} className="gap-2 flex items-center px-5 text-lg shadow hover:shadow-md">
+                <Plus size={18} />
+                Add Person
+              </Button>
+            </div>
+          </div>
         </div>
         <PersonTable
           data={persons}
